@@ -2,13 +2,13 @@ import React, { useRef, useState, useEffect } from 'react';
 import Loader from 'react-loader-spinner'
 import Select from 'antd/es/select'
 import 'antd/es/select/style/css'
-import { Wrapper, GrayOverlayBackground, Paginator, Table } from './DataTable.styled';
+import { Wrapper, GrayOverlayBackground, Paginator, Table, CenterContent, Body, Footer } from './DataTable.styled';
 
 const { Option } = Select
 const DataTable = ({
     id,
     value,
-    data = {},
+    data = [],
     columns,
     header,
     footer,
@@ -21,6 +21,7 @@ const DataTable = ({
     alwaysShowPaginator,
     paginatorLeft,
     paginatorRight,
+    onRowNumberChange,
     pageLinkSize,
     rowsPerPageOptions = [10, 20, 50, 100, 1000],
     currentPageReportTemplate = '({currentPage} of {totalPages})',
@@ -30,6 +31,10 @@ const DataTable = ({
 }) => {
     const dataTableWrapperRef = useRef()
     const [rowNumberSelection, setRowNumberSelection] = useState(rowsPerPageOptions[0].toString());
+
+    useEffect(() => {
+        onRowNumberChange(rowNumberSelection)        
+    }, [rowNumberSelection]);
 
     const spinner = () => <GrayOverlayBackground>
         <Loader
@@ -47,22 +52,28 @@ const DataTable = ({
             options={rowsPerPageOptions}
         />
     </Paginator>
-
+    const renderableData = data ? data : []
     const renderBody = () => <Table>
-        <tr>H</tr>
-        <tr>H</tr>
-        <tr>H</tr>
-        <tr>H</tr>
-        <tr>H</tr>
-        <tr>H</tr>
+    {renderableData.map((row,idx) => {
+        return <tr> {row.id} {idx}</tr>
+    })}
     </Table>
+    const renderNoData = () => <CenterContent>
+            No data found
+    </CenterContent>
 
     return (
         <Wrapper id={id} className={className} style={style} ref={dataTableWrapperRef}>
-
+            <Body>
             {loading && spinner()}
+            {!loading && !data && renderNoData()}
             {!loading && data && renderBody()}
+            </Body>
+            <Footer>
+
+        
             {paginator && renderPaginator()}
+            </Footer>
 
         </Wrapper>
     );
@@ -83,7 +94,7 @@ function Dropdown({ options, onChange, value }) {
     return <div style={{ display: 'flex', alignItems: 'center' }} >
 
         <Select defaultValue={selected} style={{ width: 120 }} onChange={handleChange}>
-            {options.map(option => <Option value={option.toString()}>{option}</Option>)}
+            {options.map(option => <Option key={option.toString()} value={option.toString()}>{option}</Option>)}
             <Option value="all">Show All</Option>
         </Select>
     </div>
