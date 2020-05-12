@@ -49,6 +49,7 @@ const UserList = () => {
                 header={header}
                 footer={footer}
                 loading={isLoading}
+                allDataRecordsNumber={mockJson.length}
                 data={users}
                 onRowNumberChange={e => setItemsToShow(e)}
                 rowsPerPageOptions={rowsPerPageOptions}

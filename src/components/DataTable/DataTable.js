@@ -20,6 +20,7 @@ const DataTable = ({
     paginatorPosition = 'bottom',
     alwaysShowPaginator,
     paginatorLeft,
+    allDataRecordsNumber,
     paginatorRight,
     onRowNumberChange,
     pageLinkSize,
@@ -34,7 +35,7 @@ const DataTable = ({
 
     useEffect(() => {
         onRowNumberChange(rowNumberSelection)        
-    }, [rowNumberSelection]);
+    }, [onRowNumberChange, rowNumberSelection]);
 
     const spinner = () => <GrayOverlayBackground>
         <Loader
@@ -46,7 +47,11 @@ const DataTable = ({
     </GrayOverlayBackground>
 
     const renderPaginator = () => <Paginator>
+        {data && <div style={{paddingLeft: 20, color: 'black', fontSize: 14}} >
+            Showing {rowNumberSelection} / {allDataRecordsNumber} records
+        </div>}
         <Dropdown
+            dropdownStyle={{marginLeft: 'auto'}}
             value={rowNumberSelection}
             onChange={e => setRowNumberSelection(e)}
             options={rowsPerPageOptions}
@@ -70,8 +75,6 @@ const DataTable = ({
             {!loading && data && renderBody()}
             </Body>
             <Footer>
-
-        
             {paginator && renderPaginator()}
             </Footer>
 
@@ -83,7 +86,7 @@ const DataTable = ({
 export default DataTable;
 
 
-function Dropdown({ options, onChange, value }) {
+function Dropdown({ options, onChange, value, dropdownStyle  }) {
 
     const [selected, setSelected] = useState(value);
 
@@ -91,8 +94,7 @@ function Dropdown({ options, onChange, value }) {
         setSelected(e)
         onChange(e)
     }
-    return <div style={{ display: 'flex', alignItems: 'center' }} >
-
+    return <div style={{ display: 'flex', alignItems: 'center', ...dropdownStyle }} >
         <Select defaultValue={selected} style={{ width: 120 }} onChange={handleChange}>
             {options.map(option => <Option key={option.toString()} value={option.toString()}>{option}</Option>)}
             <Option value="all">Show All</Option>

@@ -29,7 +29,7 @@ height:35px;
 background-color: #efefef;
 display: flex;
 align-items: center;
-justify-content: flex-end;
+justify-content: space-between;
 
 `
 export const Table = styled.table`
