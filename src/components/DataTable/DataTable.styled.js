@@ -58,3 +58,8 @@ export const Body = styled.div`
 export const Footer = styled.div`
     height:45px;
 `
+
+
+export const Header = styled.div`
+    height:45px;
+`
