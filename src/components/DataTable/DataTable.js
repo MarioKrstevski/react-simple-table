@@ -43,15 +43,13 @@ const DataTable = ({
     globalFilterSearchValue,
     children,
     loading = false,
+    useFilers = true,
 }) => {
     const dataTableWrapperRef = useRef()
     const [rowNumberSelection, setRowNumberSelection] = useState(
         rowsPerPageOptions[0].toString()
     )
-    const [filters, setFilters] = useState({
-        globalFilter: '',
-    })
-    const [globalFilter, setGlobalFilter] = useState('')
+    const [filters, setFilters] = useState({})
     const [sortData, setSortData] = useState({
         value: '',
         sortBy: 'none',
@@ -65,7 +63,6 @@ const DataTable = ({
     const [dataToShow, setDataToShow] = useState(data)
 
     const s_handleColumnSort = clickedColumn => {
-        console.log('CC', clickedColumn)
         setSortData({
             value: clickedColumn,
             sortBy: sortDataTransitions[sortData.sortBy],
@@ -75,22 +72,8 @@ const DataTable = ({
     useEffect(() => {
         onRowNumberChange(rowNumberSelection)
     }, [onRowNumberChange, rowNumberSelection])
-    useEffect(() => {}, [data])
-    // useEffect(() => {
-    //     // console.log('gfs;', globalFilterSearchValue)
-    //     if (
-    //         globalFilterSearchValue &&
-    //         typeof globalFilterSearchValue === 'string'
-    //     ) {
-    //         console.log('GSF')
-    //         setGlobalFilter(globalFilterSearchValue)
-    //     } else {
-    //         setGlobalFilter('')
-    //     }
-    // }, [globalFilterSearchValue])
 
     function hasAnyMentionOfString(object, string) {
-        console.log('string', string)
         const searchString = string.toLowerCase()
         return Object.values(object).some(function(value) {
             if (Number.isInteger(value)) {
@@ -102,6 +85,65 @@ const DataTable = ({
             return value.toLowerCase().includes(searchString)
         })
     }
+    function s_handleInputFilterChange(clickedColumn, inputFilerValue) {
+        setFilters(prevState => ({
+            ...prevState,
+            [clickedColumn]: inputFilerValue.toLowerCase(),
+        }))
+    }
+    useEffect(() => {
+        if (useFilers && filters && Object.values(filters).some(Boolean)) {
+            const filterOutByColumnsFilters = obj => {
+                return Object.keys(filters).every((key, index) => {
+                    // console.log(obj, key, obj[key], filters[key])
+                    if (filters[key] === '') {
+                        return true
+                    }
+                    return obj[key]
+                        .toString()
+                        .toLowerCase()
+                        .includes(filters[key].toLowerCase())
+                })
+            }
+            if (globalFilterSearchValue) {
+                const filterArray = data
+                    .filter(obj =>
+                        hasAnyMentionOfString(obj, globalFilterSearchValue)
+                    )
+                    .filter(filterOutByColumnsFilters)
+                Timsort.sort(filterArray, sortBySorter)
+                setDataToShow(filterArray)
+            } else {
+                let sortedOriginal
+                if (data) {
+                    sortedOriginal = [...data.filter(filterOutByColumnsFilters)]
+                    Timsort.sort(sortedOriginal, sortBySorter)
+                } else {
+                    sortedOriginal = data
+                }
+                setDataToShow(sortedOriginal)
+            }
+        } else {
+            // Sort again like we would if global search is here
+            if (globalFilterSearchValue) {
+                // console.log('GF', globalFilterSearchValue)
+                const filterArray = data.filter(obj =>
+                    hasAnyMentionOfString(obj, globalFilterSearchValue)
+                )
+                Timsort.sort(filterArray, sortBySorter)
+                setDataToShow(filterArray)
+            } else {
+                let sortedOriginal
+                if (data) {
+                    sortedOriginal = [...data]
+                    Timsort.sort(sortedOriginal, sortBySorter)
+                } else {
+                    sortedOriginal = data
+                }
+                setDataToShow(sortedOriginal)
+            }
+        }
+    }, [filters, useFilers])
     function sortBySorter(a, b) {
         // a & b are objects
         if (sortData.sortBy === 'none' || !sortData.value) {
@@ -192,6 +234,8 @@ const DataTable = ({
                     data={dataToShow}
                     sortData={sortData}
                     handleColumnSort={s_handleColumnSort}
+                    useFilers={useFilers}
+                    handleInputFilterChange={s_handleInputFilterChange}
                 >
                     {children}
                 </THead>

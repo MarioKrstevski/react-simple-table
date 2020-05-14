@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import DataTable from '../DataTable/DataTable'
 import mockJson from '../../assets/mocks/mockdata.json'
-import Column from '../Column/Column'
+import { useDebounce } from 'use-lodash-debounce'
+import List from './List'
+
 const Wrapper = styled.div`
     margin: 200px auto 0;
 
@@ -15,6 +16,9 @@ const UserList = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [itemsToShow, setItemsToShow] = useState(10)
     const [globalSearchValue, setGlobalSearchValue] = useState('')
+    const debouncedGlobalSearchValue = useDebounce(globalSearchValue, 400)
+    const [useFilters, setUseFilters] = useState(false)
+
     function fakeAsync(delay, value) {
         setIsLoading(true)
         return new Promise(function(resolve) {
@@ -40,20 +44,7 @@ const UserList = () => {
     useEffect(() => {
         // console.log('Users', users)
     }, [users])
-    const header = () => <div>Header</div>
-    const footer = () => <div>Footer</div>
-    const rowsPerPageOptions = [10, 20, 50, 100, 1000]
-    const userColumns = [
-        { keyField: 'address', label: 'Address' },
-        { keyField: 'age', label: 'Age' },
-        { keyField: 'city', label: 'City' },
-        { keyField: 'country', label: 'Country' },
-        { keyField: 'email', label: 'Email' },
-        { keyField: 'first_name', label: 'Name' },
-        { keyField: 'last_name', label: 'Surname' },
-        { keyField: 'username', label: 'Username' },
-        { keyField: 'gender', label: 'Gender' },
-    ]
+
     useEffect(() => {
         // console.log('GSV', globalSearchValue)
     }, [globalSearchValue])
@@ -72,22 +63,32 @@ const UserList = () => {
                         // console.log(e.target.value)
                     }}
                 />
+
+                <input
+                    style={{ marginLeft: 20 }}
+                    type="checkbox"
+                    name="useFilters"
+                    checked={useFilters}
+                    onChange={e => {
+                        setUseFilters(e.target.checked)
+                        console.dir(e.target.checked)
+                    }}
+                />
+                <label
+                    style={{ padding: '0 8px', marginLeft: 4 }}
+                    htmlFor="useFilters"
+                >
+                    Use Seperate Filters
+                </label>
             </div>
-            <DataTable
-                header={header}
-                footer={footer}
-                loading={isLoading}
-                allDataRecordsNumber={mockJson.length}
+            <List
+                isLoading={isLoading}
                 data={users}
                 onRowNumberChange={e => setItemsToShow(e)}
-                rowsPerPageOptions={rowsPerPageOptions}
-                paginator
-                globalFilterSearchValue={globalSearchValue}
-            >
-                {userColumns.map(columnInfo => {
-                    return <Column {...columnInfo} />
-                })}
-            </DataTable>
+                allDataRecordsNumber={mockJson.length}
+                useFilters={useFilters}
+                globalFilterSearchValue={debouncedGlobalSearchValue}
+            />
         </Wrapper>
     )
 }

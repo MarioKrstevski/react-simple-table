@@ -1,5 +1,6 @@
 import React from 'react'
 import HeaderCell from '../HeaderCell/HeaderCell'
+import HeaderCellInput from '../HeaderCellInput/HeaderCellInput'
 
 const THead = ({
     data,
@@ -10,9 +11,10 @@ const THead = ({
     tabIndex,
     onSort,
     children,
-
+    useFilers,
     sortData,
     handleColumnSort,
+    handleInputFilterChange,
 }) => {
     function createHeaderCells(columns) {
         return React.Children.map(columns, (column, i) => {
@@ -34,10 +36,34 @@ const THead = ({
             )
         })
     }
+    function createFilterInputs(columns) {
+        return React.Children.map(columns, (column, i) => {
+            // console.log('cc', column)
+            const columnProps = column.props
+            return (
+                <HeaderCellInput
+                    key={column.keyField || i}
+                    columnProps={column.props}
+                    data={data}
+                    handleInputFilterChange={handleInputFilterChange}
+                ></HeaderCellInput>
+            )
+        })
+    }
     let content
     let columns = React.Children.toArray(children)
     content = <tr>{createHeaderCells(columns)}</tr>
-    return <thead className="dt-thead">{content}</thead>
+    const filterInputs = <tr>{createFilterInputs(columns)}</tr>
+    return (
+        <>
+            <thead className="dt-thead">{content}</thead>
+            {useFilers && (
+                <thead className="dt-thead dt-thead-inputs">
+                    {filterInputs}
+                </thead>
+            )}
+        </>
+    )
 }
 
 export default THead
