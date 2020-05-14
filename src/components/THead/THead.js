@@ -10,10 +10,13 @@ const THead = ({
     tabIndex,
     onSort,
     children,
+
+    sortData,
+    handleColumnSort,
 }) => {
     function createHeaderCells(columns) {
         return React.Children.map(columns, (column, i) => {
-            console.log('cc', column)
+            // console.log('cc', column)
             return (
                 <HeaderCell
                     key={column.keyField || i}
@@ -25,6 +28,8 @@ const THead = ({
                     onFilter={onFilter}
                     filters={filters}
                     tabIndex={tabIndex}
+                    sortData={sortData}
+                    handleColumnSort={handleColumnSort}
                 />
             )
         })
@@ -32,7 +37,7 @@ const THead = ({
     let content
     let columns = React.Children.toArray(children)
     content = <tr>{createHeaderCells(columns)}</tr>
-    return <thead className="p-datatable-thead">{content}</thead>
+    return <thead className="dt-thead">{content}</thead>
 }
 
 export default THead

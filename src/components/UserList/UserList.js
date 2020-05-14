@@ -10,13 +10,11 @@ const Wrapper = styled.div`
     border: 1px solid black;
 `
 
-console.log(mockJson)
-console.log(mockJson.length)
-
 const UserList = () => {
     const [users, setUsers] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [itemsToShow, setItemsToShow] = useState(10)
+    const [globalSearchValue, setGlobalSearchValue] = useState('')
     function fakeAsync(delay, value) {
         setIsLoading(true)
         return new Promise(function(resolve) {
@@ -24,10 +22,9 @@ const UserList = () => {
         })
     }
     useEffect(() => {
-        const response = fakeAsync(3000, mockJson)
+        const response = fakeAsync(500, mockJson)
         response
             .then(function(resp) {
-                console.log(typeof itemsToShow)
                 setUsers(
                     itemsToShow === 'all'
                         ? resp
@@ -36,13 +33,12 @@ const UserList = () => {
                 setIsLoading(false)
             })
             .catch(function(e) {
-                console.log(e)
                 setIsLoading(false)
             })
     }, [itemsToShow])
 
     useEffect(() => {
-        console.log('Users', users)
+        // console.log('Users', users)
     }, [users])
     const header = () => <div>Header</div>
     const footer = () => <div>Footer</div>
@@ -57,11 +53,26 @@ const UserList = () => {
         { keyField: 'last_name', label: 'Surname' },
         { keyField: 'username', label: 'Username' },
         { keyField: 'gender', label: 'Gender' },
-        { keyField: 'email', label: 'Email' },
     ]
-
+    useEffect(() => {
+        // console.log('GSV', globalSearchValue)
+    }, [globalSearchValue])
     return (
         <Wrapper>
+            <div>
+                <label style={{ padding: '0 8px' }} htmlFor="globalValue">
+                    {' '}
+                    Global Search{' '}
+                </label>
+                <input
+                    name="globalValue"
+                    value={globalSearchValue}
+                    onChange={e => {
+                        setGlobalSearchValue(e.target.value)
+                        // console.log(e.target.value)
+                    }}
+                />
+            </div>
             <DataTable
                 header={header}
                 footer={footer}
@@ -71,6 +82,7 @@ const UserList = () => {
                 onRowNumberChange={e => setItemsToShow(e)}
                 rowsPerPageOptions={rowsPerPageOptions}
                 paginator
+                globalFilterSearchValue={globalSearchValue}
             >
                 {userColumns.map(columnInfo => {
                     return <Column {...columnInfo} />

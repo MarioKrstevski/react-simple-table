@@ -17,9 +17,9 @@ const BodyRow = ({ key, rowData, rowIndex, children }) => {
         )
         cells.push(cell)
     })
-    console.log('clmns', columns)
+    // console.log('clmns', columns)
     return (
-        <tr className="table-row" ref={bodyRowRef}>
+        <tr key={rowData.id} className="table-row" ref={bodyRowRef}>
             {cells}
         </tr>
     )

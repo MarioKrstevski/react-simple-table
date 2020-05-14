@@ -14,6 +14,8 @@ import {
 import THead from '../THead/THead'
 import TBody from '../TBody/TBody'
 
+// we are using timsort because it's faster than the regular sort offered by Arrat.sort()
+var Timsort = require('timsort')
 const { Option } = Select
 const DataTable = ({
     id,
@@ -38,6 +40,7 @@ const DataTable = ({
     currentPageReportTemplate = '({currentPage} of {totalPages})',
     scrollable,
     scrollHeight,
+    globalFilterSearchValue,
     children,
     loading = false,
 }) => {
@@ -45,10 +48,102 @@ const DataTable = ({
     const [rowNumberSelection, setRowNumberSelection] = useState(
         rowsPerPageOptions[0].toString()
     )
+    const [filters, setFilters] = useState({
+        globalFilter: '',
+    })
+    const [globalFilter, setGlobalFilter] = useState('')
+    const [sortData, setSortData] = useState({
+        value: '',
+        sortBy: 'none',
+    })
+
+    const sortDataTransitions = {
+        asc: 'desc',
+        desc: 'none',
+        none: 'asc',
+    }
+    const [dataToShow, setDataToShow] = useState(data)
+
+    const s_handleColumnSort = clickedColumn => {
+        console.log('CC', clickedColumn)
+        setSortData({
+            value: clickedColumn,
+            sortBy: sortDataTransitions[sortData.sortBy],
+        })
+    }
 
     useEffect(() => {
         onRowNumberChange(rowNumberSelection)
     }, [onRowNumberChange, rowNumberSelection])
+    useEffect(() => {}, [data])
+    // useEffect(() => {
+    //     // console.log('gfs;', globalFilterSearchValue)
+    //     if (
+    //         globalFilterSearchValue &&
+    //         typeof globalFilterSearchValue === 'string'
+    //     ) {
+    //         console.log('GSF')
+    //         setGlobalFilter(globalFilterSearchValue)
+    //     } else {
+    //         setGlobalFilter('')
+    //     }
+    // }, [globalFilterSearchValue])
+
+    function hasAnyMentionOfString(object, string) {
+        console.log('string', string)
+        const searchString = string.toLowerCase()
+        return Object.values(object).some(function(value) {
+            if (Number.isInteger(value)) {
+                return value
+                    .toString()
+                    .toLowerCase()
+                    .includes(searchString)
+            }
+            return value.toLowerCase().includes(searchString)
+        })
+    }
+    function sortBySorter(a, b) {
+        // a & b are objects
+        if (sortData.sortBy === 'none' || !sortData.value) {
+            return a.id < b.id ? -1 : 1
+        }
+        if (sortData.sortBy === 'asc') {
+            return a[sortData.value] < b[sortData.value] ? -1 : 1
+        }
+        if (sortData.sortBy === 'desc') {
+            return a[sortData.value] < b[sortData.value] ? 1 : -1
+        }
+    }
+    useEffect(() => {
+        if (globalFilterSearchValue) {
+            // console.log('GF', globalFilterSearchValue)
+            const filterArray = data.filter(obj =>
+                hasAnyMentionOfString(obj, globalFilterSearchValue)
+            )
+            Timsort.sort(filterArray, sortBySorter)
+            setDataToShow(filterArray)
+        } else {
+            let sortedOriginal
+            if (data) {
+                sortedOriginal = [...data]
+                Timsort.sort(sortedOriginal, sortBySorter)
+            } else {
+                sortedOriginal = data
+            }
+            setDataToShow(sortedOriginal)
+        }
+    }, [globalFilterSearchValue, data])
+
+    useEffect(() => {
+        setDataToShow(prevState => {
+            if (!prevState) {
+                return prevState
+            }
+            const sortedData = [...prevState]
+            Timsort.sort(sortedData, sortBySorter)
+            return sortedData
+        })
+    }, [sortData])
 
     const spinner = () => (
         <GrayOverlayBackground>
@@ -58,7 +153,7 @@ const DataTable = ({
 
     const renderPaginator = () => (
         <Paginator>
-            {data && (
+            {dataToShow && (
                 <div style={{ paddingLeft: 20, color: 'black', fontSize: 14 }}>
                     Showing {rowNumberSelection} / {allDataRecordsNumber}{' '}
                     records
@@ -72,13 +167,12 @@ const DataTable = ({
             />
         </Paginator>
     )
-    const renderableData = data ? data : []
+    const renderableData = dataToShow ? dataToShow : []
     const renderBody = () => (
         <Table>
             {renderableData.map((row, idx) => {
                 return (
                     <tr>
-                        {' '}
                         {row.id} {idx}
                     </tr>
                 )
@@ -86,23 +180,30 @@ const DataTable = ({
         </Table>
     )
     const renderNoData = () => <CenterContent>No data found</CenterContent>
-    console.log('call', children)
     return (
         <Wrapper
             id={id}
-            className={className}
+            className={'data-table-wrapper ' + className}
             style={style}
             ref={dataTableWrapperRef}
         >
-            <THead data={data}>{children}</THead>
-            <TBody
-                data={data}
-                emptyMessage={renderNoData()}
-                loadingSpinner={spinner()}
-                loading={loading}
-            >
-                {children}
-            </TBody>
+            <table className="data-table">
+                <THead
+                    data={dataToShow}
+                    sortData={sortData}
+                    handleColumnSort={s_handleColumnSort}
+                >
+                    {children}
+                </THead>
+                <TBody
+                    data={dataToShow}
+                    emptyMessage={renderNoData()}
+                    loadingSpinner={spinner()}
+                    loading={loading}
+                >
+                    {children}
+                </TBody>
+            </table>
             <Footer>{paginator && renderPaginator()}</Footer>
         </Wrapper>
     )
