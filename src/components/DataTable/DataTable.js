@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useLayoutEffect } from 'react'
 import Loader from 'react-loader-spinner'
 import Select from 'antd/es/select'
 import 'antd/es/select/style/css'
@@ -63,9 +63,17 @@ const DataTable = ({
     const [dataToShow, setDataToShow] = useState(data)
 
     const s_handleColumnSort = clickedColumn => {
-        setSortData({
-            value: clickedColumn,
-            sortBy: sortDataTransitions[sortData.sortBy],
+        setSortData(prevState => {
+            if (prevState.value !== clickedColumn) {
+                return {
+                    value: clickedColumn,
+                    sortBy: 'asc',
+                }
+            }
+            return {
+                value: clickedColumn,
+                sortBy: sortDataTransitions[sortData.sortBy],
+            }
         })
     }
 
@@ -91,7 +99,8 @@ const DataTable = ({
             [clickedColumn]: inputFilerValue.toLowerCase(),
         }))
     }
-    useEffect(() => {
+    useLayoutEffect(() => {
+        console.time('test')
         if (useFilers && filters && Object.values(filters).some(Boolean)) {
             const filterOutByColumnsFilters = obj => {
                 return Object.keys(filters).every((key, index) => {
@@ -143,7 +152,8 @@ const DataTable = ({
                 setDataToShow(sortedOriginal)
             }
         }
-    }, [filters, useFilers])
+        console.timeEnd('test')
+    }, [filters, useFilers, globalFilterSearchValue, data])
     function sortBySorter(a, b) {
         // a & b are objects
         if (sortData.sortBy === 'none' || !sortData.value) {
@@ -156,25 +166,6 @@ const DataTable = ({
             return a[sortData.value] < b[sortData.value] ? 1 : -1
         }
     }
-    useEffect(() => {
-        if (globalFilterSearchValue) {
-            // console.log('GF', globalFilterSearchValue)
-            const filterArray = data.filter(obj =>
-                hasAnyMentionOfString(obj, globalFilterSearchValue)
-            )
-            Timsort.sort(filterArray, sortBySorter)
-            setDataToShow(filterArray)
-        } else {
-            let sortedOriginal
-            if (data) {
-                sortedOriginal = [...data]
-                Timsort.sort(sortedOriginal, sortBySorter)
-            } else {
-                sortedOriginal = data
-            }
-            setDataToShow(sortedOriginal)
-        }
-    }, [globalFilterSearchValue, data])
 
     useEffect(() => {
         setDataToShow(prevState => {
