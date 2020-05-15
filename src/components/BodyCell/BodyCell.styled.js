@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const TD = styled.th`
+export const TD = styled.td`
     min-width: 50px;
     width: 60px;
     box-sizing: border-box;

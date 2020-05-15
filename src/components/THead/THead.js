@@ -52,8 +52,18 @@ const THead = ({
     }
     let content
     let columns = React.Children.toArray(children)
-    content = <tr>{createHeaderCells(columns)}</tr>
-    const filterInputs = <tr>{createFilterInputs(columns)}</tr>
+    content = (
+        <tr>
+            <th className="dt-th dt-column dt-column-input">No.1</th>{' '}
+            {createHeaderCells(columns)}
+        </tr>
+    )
+    const filterInputs = (
+        <tr>
+            <th></th>
+            {createFilterInputs(columns)}
+        </tr>
+    )
     return (
         <>
             <thead className="dt-thead">{content}</thead>

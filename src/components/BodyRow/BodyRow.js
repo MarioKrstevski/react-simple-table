@@ -20,6 +20,7 @@ const BodyRow = ({ key, rowData, rowIndex, children }) => {
     // console.log('clmns', columns)
     return (
         <tr key={rowData.id} className="table-row" ref={bodyRowRef}>
+            <td>{rowIndex + 1}</td>
             {cells}
         </tr>
     )

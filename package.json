@@ -13,6 +13,7 @@
     "react-icons": "^3.10.0",
     "react-loader-spinner": "^3.1.14",
     "react-scripts": "3.4.1",
+    "react-window": "^1.8.5",
     "styled-components": "^5.1.0",
     "timsort": "^0.3.0",
     "use-lodash-debounce": "^1.1.0"
