@@ -74,10 +74,7 @@ const List = ({
     ]
     return (
         <DataTable
-            header={header}
-            footer={footer}
             loading={isLoading}
-            allDataRecordsNumber={allDataRecordsNumber}
             data={data}
             onRowNumberChange={onRowNumberChange}
             rowsPerPageOptions={rowsPerPageOptions}
