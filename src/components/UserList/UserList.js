@@ -18,6 +18,7 @@ const UserList = () => {
     const [globalSearchValue, setGlobalSearchValue] = useState('')
     const debouncedGlobalSearchValue = useDebounce(globalSearchValue, 400)
     const [useFilters, setUseFilters] = useState(false)
+    const [timeTaken, setTimeTaken] = useState(0)
 
     function fakeAsync(delay, value) {
         setIsLoading(true)
@@ -26,18 +27,19 @@ const UserList = () => {
         })
     }
     useEffect(() => {
-        const response = fakeAsync(500, mockJson)
-        response
-            .then(function(resp) {
-                setUsers(
-                    itemsToShow === 'all'
-                        ? resp
-                        : resp.slice(0, parseInt(itemsToShow))
-                )
+        const apiAll = 'https://my.api.mockaroo.com/users?key=dc4f4780'
+        const apiLimit =
+            'https://my.api.mockaroo.com/users/' + itemsToShow + '?key=dc4f4780'
+
+        setIsLoading(true)
+        const started = new Date().getTime()
+        const respPromise = fetch(itemsToShow === 'all' ? apiAll : apiLimit)
+            .then(resp => resp.json())
+            .then(users => {
+                console.log(users)
+                setUsers(users)
                 setIsLoading(false)
-            })
-            .catch(function(e) {
-                setIsLoading(false)
+                setTimeTaken(new Date().getTime() - started)
             })
     }, [itemsToShow])
 
@@ -80,6 +82,11 @@ const UserList = () => {
                 >
                     Use Seperate Filters
                 </label>
+
+                {!!users && <b> {users.length} results</b>}
+                {!!timeTaken && (
+                    <span> Time loading : {timeTaken} miliseconds</span>
+                )}
             </div>
             <List
                 isLoading={isLoading}

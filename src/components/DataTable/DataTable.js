@@ -186,12 +186,6 @@ const DataTable = ({
 
     const renderPaginator = () => (
         <Paginator>
-            {dataToShow && (
-                <div style={{ paddingLeft: 20, color: 'black', fontSize: 14 }}>
-                    Showing {rowNumberSelection} / {allDataRecordsNumber}{' '}
-                    records
-                </div>
-            )}
             <Dropdown
                 dropdownStyle={{ marginLeft: 'auto' }}
                 value={rowNumberSelection}
