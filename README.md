@@ -23,9 +23,12 @@ Inside UserList component which would be a top level component in Reat, inside u
 
 I created a simple API to work with my custom table
 
-#PROPS:# 
-* loading - true|false => shows a spinner if true, otherwise renders data
-* data - [] => Array of values to display
+'#' -> required prop
+ '!' -> not required prop, but in 90% of cases you would use it, otherwise something is messed up
+
+**PROPS:** 
+* loading (!) - true|false => shows a spinner if true, otherwise renders data
+* data (#) - [] => Array of values to display
 * onRowNumberChange - func() => Listener that will recieve a number each time the paginator row count is changed (ex: if we track the value we can use it to fetch X amount of data )
 * pagintaor - true|false => to show or not to show the pagintor options (row numbers to display)
 * globalFilterSearchValue - string => If the string exists, we only display the rows that include this string
@@ -47,10 +50,21 @@ I created a simple API to work with my custom table
 
 # Column Component
  
+ '#' -> required prop
+ '!' -> not required prop, but in 90% of cases you would use it, otherwise something is messed up
 
-#PROPS:#
-* keyField - string => what property to display in this column, must match with some key from `data` (ex: data: [{name:'Joe'}]), then keyField should be 'name', and in this column are displayed name properties of the object
-* label - string => What would the Column Header be for this Column
-* width: 115 - string (ex: '100px', a valid css) | number => How much width should this column have, all data that can't fit will be with ellipsys 
+**PROPS:**
+* keyField (#) - string => what property to display in this column, must match with some key from `data` (ex: data: [{name:'Joe'}]), then keyField should be 'name', and in this column are displayed name properties of the object
+* label (#) - string => What would the Column Header be for this Column
+* width (!) - string (ex: '100px', a valid css) | number => How much width should this column have, all data that can't fit will be with ellipsys 
 * template - func() => a custom template design to change the rendering of each cell (td), 
-`example function (rowData)=> <div style={{fontSize:20}}> {rowData.name}  <div>` now the name column will have font-size:20px for every cell. You can also show custom templating there (show tags,badges,icons, ...etc)
+`example function (rowData)=> <div style={{fontSize:20}}> {rowData.name}  <div>` now the name column will have font-size:20px for every cell. You can also show custom templating there (show tags,badges,icons, ...etc) Technically you have access to other column data and you can even display something from other column too
+
+```
+<Column
+    keyField="name"
+    label="First Name"
+    width={100}
+    template={(rowData)=> <div> {rowData.name === 'Mario' ? 'Owner' : rowData.name}  <div> }
+/>
+ ```
