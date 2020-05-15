@@ -36,7 +36,10 @@ const UserList = () => {
             setTimeout(resolve, delay, value)
         })
     }
+
     useEffect(() => {
+        // Uncomment to use API FROM MOCKAROO
+
         // const apiAll = 'https://my.api.mockaroo.com/users?key=dc4f4780'
         // const apiLimit =
         //     'https://my.api.mockaroo.com/users/' + itemsToShow + '?key=dc4f4780'
@@ -52,7 +55,7 @@ const UserList = () => {
         //         setTimeTaken(new Date().getTime() - started)
         //     })
 
-        // in case api doesnt work uncoment this below to use mock data
+        // Uncomment to use MOCK DATA LOCALLY
         const response = fakeAsync(3000, mockJson)
         response
             .then(function(resp) {
