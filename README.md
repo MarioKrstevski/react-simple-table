@@ -23,8 +23,8 @@ Inside UserList component which would be a top level component in Reat, inside u
 
 I created a simple API to work with my custom table
 
-'#' -> required prop
- '!' -> not required prop, but in 90% of cases you would use it, otherwise something is messed up
+- '#' -> required prop
+- '!' -> not required prop, but in 90% of cases you would use it, otherwise something is messed up
 
 **PROPS:** 
 * loading (!) - true|false => shows a spinner if true, otherwise renders data
@@ -50,8 +50,8 @@ I created a simple API to work with my custom table
 
 # Column Component
  
- '#' -> required prop
- '!' -> not required prop, but in 90% of cases you would use it, otherwise something is messed up
+ - '#' -> required prop
+ - '!' -> not required prop, but in 90% of cases you would use it, otherwise something is messed up
 
 **PROPS:**
 * keyField (#) - string => what property to display in this column, must match with some key from `data` (ex: data: [{name:'Joe'}]), then keyField should be 'name', and in this column are displayed name properties of the object
