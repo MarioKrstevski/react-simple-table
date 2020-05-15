@@ -68,3 +68,6 @@ I created a simple API to work with my custom table
     template={(rowData)=> <div> {rowData.name === 'Mario' ? 'Owner' : rowData.name}  <div> }
 />
  ```
+
+
+## In next version update, I will update on how to change the CSS for the whole table, and I will expose some classes for you to override. You can still do this if you inspect the classes (but not guaranteed it will work)
