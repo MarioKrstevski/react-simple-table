@@ -1,6 +1,5 @@
 import React, { useRef } from 'react'
 import BodyCell from '../BodyCell/BodyCell'
-import { template } from 'handlebars'
 const BodyRow = ({ key, rowData, rowIndex, children }) => {
     const bodyRowRef = useRef()
     let columns = React.Children.toArray(children)
@@ -20,7 +19,7 @@ const BodyRow = ({ key, rowData, rowIndex, children }) => {
     // console.log('clmns', columns)
     return (
         <tr key={rowData.id} className="table-row" ref={bodyRowRef}>
-            <td>{rowData.id}</td>
+            <td className="dt-column-input">{rowData.id}</td>
             {cells}
         </tr>
     )

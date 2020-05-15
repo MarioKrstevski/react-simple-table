@@ -1,11 +1,22 @@
 import React, { useRef } from 'react'
-import { TD } from './BodyCell.styled'
-const BodyCell = ({ template, rowData, keyField, columnProps }) => {
+const BodyCell = ({ rowData, columnProps }) => {
     const bodyCellRef = useRef()
-    // console.log('Hello', template, rowData, columnProps)
+    const propsStyle = columnProps.style ? columnProps.style : {}
+    const propsWidth = columnProps.width
+        ? {
+              width: columnProps.width,
+              maxWidth: columnProps.width,
+              minWidth: columnProps.width,
+          }
+        : {}
+    const styleToShow = { ...propsStyle, ...propsWidth }
     return (
-        <td ref={bodyCellRef} className="body-cell" style={columnProps.style}>
-            {rowData[columnProps.keyField]}
+        <td ref={bodyCellRef} className="body-cell" style={styleToShow}>
+            {columnProps.template ? (
+                columnProps.template(rowData)
+            ) : (
+                <span>{rowData[columnProps.keyField]}</span>
+            )}
         </td>
     )
 }

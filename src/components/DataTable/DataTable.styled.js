@@ -1,14 +1,81 @@
 import styled from 'styled-components'
 
 export const Wrapper = styled.div`
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    background-color: pink;
-    height: 290px;
+    .table-div {
+        overflow-x: auto;
+    }
+
+    table {
+        border: 1px solid #333;
+    }
+    tr {
+        border: none;
+    }
+    tr:nth-child(odd) {
+        background-color: #35393e;
+        color: white;
+    }
+    tr:nth-child(even) {
+        background-color: #23272a;
+        color: white;
+    }
+    tr:hover {
+        background-color: #2b2f31;
+        color: white;
+    }
+    th {
+        background-color: #0082c8;
+        padding: 8px 10px;
+        color: white;
+    }
+
+    tbody {
+        display: block;
+        height: fit-content;
+        max-height: 400px;
+        overflow: auto;
+        min-width: 400px;
+    }
+    thead tr,
+    tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: auto;
+    }
+
+    thead {
+        width: calc(
+            100% - 1em
+        ); /* scrollbar is average 1em/16px width, remove it from thead width */
+    }
+    .dt-column-input {
+        width: 35px !important;
+        text-align: center;
+        padding-left: 2px;
+        padding-right: 2px;
+        input {
+            width: 98%;
+            float: left;
+            color: black;
+            outline: none;
+            padding: 1px;
+        }
+    }
+    .body-cell {
+        padding: 4px 6px;
+        /* border: 0; */
+        cursor: auto;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    table {
+        width: 100%;
+    }
 `
 export const GrayOverlayBackground = styled.div`
-    width: 100%;
+    width: 80vw;
+    min-width: 400px;
     height: 250px;
     display: flex;
     justify-content: center;
@@ -22,8 +89,9 @@ export const GrayOverlayBackground = styled.div`
 
 export const Paginator = styled.div`
     margin-top: auto;
-    height: 35px;
-    background-color: #efefef;
+    padding-right: 30px;
+    height: 100%;
+    background-color: #0082c8;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -35,7 +103,8 @@ export const Table = styled.table`
     overflow-y: auto;
 `
 export const CenterContent = styled.div`
-    width: 100%;
+    width: 80vw;
+    min-width: 400px;
     height: 265px;
     display: flex;
     align-items: center;
@@ -49,7 +118,7 @@ export const Body = styled.div`
 `
 
 export const Footer = styled.div`
-    height: 45px;
+    height: 40px;
 `
 
 export const Header = styled.div`

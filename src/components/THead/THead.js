@@ -18,7 +18,6 @@ const THead = ({
 }) => {
     function createHeaderCells(columns) {
         return React.Children.map(columns, (column, i) => {
-            // console.log('cc', column)
             return (
                 <HeaderCell
                     key={column.keyField || i}
@@ -38,8 +37,6 @@ const THead = ({
     }
     function createFilterInputs(columns) {
         return React.Children.map(columns, (column, i) => {
-            // console.log('cc', column)
-            const columnProps = column.props
             return (
                 <HeaderCellInput
                     key={column.keyField || i}
@@ -54,13 +51,13 @@ const THead = ({
     let columns = React.Children.toArray(children)
     content = (
         <tr>
-            <th className="dt-th dt-column dt-column-input">No.1</th>{' '}
+            <th className="dt-th dt-column dt-column-input">#</th>
             {createHeaderCells(columns)}
         </tr>
     )
     const filterInputs = (
         <tr>
-            <th></th>
+            <th className="dt-column-input"></th>
             {createFilterInputs(columns)}
         </tr>
     )

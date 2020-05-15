@@ -14,15 +14,63 @@ const List = ({
     const footer = () => <div>Footer</div>
     const rowsPerPageOptions = [10, 20, 50, 100, 1000]
     const userColumns = [
-        { keyField: 'address', label: 'Address' },
-        { keyField: 'age', label: 'Age' },
-        { keyField: 'city', label: 'City' },
-        { keyField: 'country', label: 'Country' },
-        { keyField: 'email', label: 'Email' },
-        { keyField: 'first_name', label: 'Name' },
-        { keyField: 'last_name', label: 'Surname' },
-        { keyField: 'username', label: 'Username' },
-        { keyField: 'gender', label: 'Gender' },
+        {
+            keyField: 'address',
+            label: 'Address',
+            width: '200px',
+        },
+        {
+            keyField: 'age',
+            label: 'Age',
+            width: 70,
+        },
+        {
+            keyField: 'city',
+            label: 'City',
+            width: 115,
+        },
+        {
+            keyField: 'country',
+            label: 'Country',
+            width: 115,
+        },
+        {
+            keyField: 'email',
+            label: 'Email',
+            width: 155,
+        },
+        {
+            keyField: 'first_name',
+            label: 'Name',
+            width: 105,
+        },
+        {
+            keyField: 'last_name',
+            label: 'Surname',
+            width: 115,
+        },
+        {
+            keyField: 'username',
+            label: 'Username',
+            width: 115,
+        },
+        {
+            keyField: 'gender',
+            label: 'Gender',
+            width: 90,
+            template: data => (
+                <span
+                    style={{
+                        color:
+                            data.gender && data.gender === 'Female'
+                                ? 'pink'
+                                : 'lightblue',
+                    }}
+                >
+                    {data.gender && data.gender === 'Female' ? 'F' : 'M'}{' '}
+                </span>
+            ),
+        },
     ]
     return (
         <DataTable

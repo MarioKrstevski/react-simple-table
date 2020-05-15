@@ -6,9 +6,7 @@ import {
     Wrapper,
     GrayOverlayBackground,
     Paginator,
-    Table,
     CenterContent,
-    Body,
     Footer,
 } from './DataTable.styled'
 import THead from '../THead/THead'
@@ -19,27 +17,12 @@ var Timsort = require('timsort')
 const { Option } = Select
 const DataTable = ({
     id,
-    value,
     data = [],
-    columns,
-    header,
-    footer,
     style,
     className,
-    tableStyle,
-    tableClassName,
     paginator = true,
-    paginatorPosition = 'bottom',
-    alwaysShowPaginator,
-    paginatorLeft,
-    allDataRecordsNumber,
-    paginatorRight,
     onRowNumberChange,
-    pageLinkSize,
     rowsPerPageOptions = [10, 20, 50, 100, 1000],
-    currentPageReportTemplate = '({currentPage} of {totalPages})',
-    scrollable,
-    scrollHeight,
     globalFilterSearchValue,
     children,
     loading = false,
@@ -100,11 +83,9 @@ const DataTable = ({
         }))
     }
     useLayoutEffect(() => {
-        console.time('test')
         if (useFilers && filters && Object.values(filters).some(Boolean)) {
             const filterOutByColumnsFilters = obj => {
                 return Object.keys(filters).every((key, index) => {
-                    // console.log(obj, key, obj[key], filters[key])
                     if (filters[key] === '') {
                         return true
                     }
@@ -135,7 +116,6 @@ const DataTable = ({
         } else {
             // Sort again like we would if global search is here
             if (globalFilterSearchValue) {
-                // console.log('GF', globalFilterSearchValue)
                 const filterArray = data.filter(obj =>
                     hasAnyMentionOfString(obj, globalFilterSearchValue)
                 )
@@ -152,7 +132,6 @@ const DataTable = ({
                 setDataToShow(sortedOriginal)
             }
         }
-        console.timeEnd('test')
     }, [filters, useFilers, globalFilterSearchValue, data])
     function sortBySorter(a, b) {
         // a & b are objects
@@ -194,18 +173,7 @@ const DataTable = ({
             />
         </Paginator>
     )
-    const renderableData = dataToShow ? dataToShow : []
-    const renderBody = () => (
-        <Table>
-            {renderableData.map((row, idx) => {
-                return (
-                    <tr>
-                        {row.id} {idx}
-                    </tr>
-                )
-            })}
-        </Table>
-    )
+
     const renderNoData = () => <CenterContent>No data found</CenterContent>
     return (
         <Wrapper
@@ -214,32 +182,33 @@ const DataTable = ({
             style={style}
             ref={dataTableWrapperRef}
         >
-            <table className="data-table">
-                <THead
-                    data={dataToShow}
-                    sortData={sortData}
-                    handleColumnSort={s_handleColumnSort}
-                    useFilers={useFilers}
-                    handleInputFilterChange={s_handleInputFilterChange}
-                >
-                    {children}
-                </THead>
-                <TBody
-                    data={dataToShow}
-                    emptyMessage={renderNoData()}
-                    loadingSpinner={spinner()}
-                    loading={loading}
-                >
-                    {children}
-                </TBody>
-            </table>
+            <div className="table-div">
+                <table className="data-table">
+                    <THead
+                        data={dataToShow}
+                        sortData={sortData}
+                        handleColumnSort={s_handleColumnSort}
+                        useFilers={useFilers}
+                        handleInputFilterChange={s_handleInputFilterChange}
+                    >
+                        {children}
+                    </THead>
+                    <TBody
+                        data={dataToShow}
+                        emptyMessage={renderNoData()}
+                        loadingSpinner={spinner()}
+                        loading={loading}
+                    >
+                        {children}
+                    </TBody>
+                </table>
+            </div>
+
             <Footer>{paginator && renderPaginator()}</Footer>
         </Wrapper>
     )
 }
-// {loading && spinner()}
-// {!loading && !data && renderNoData()}
-// {!loading && data && renderBody()}
+
 export default DataTable
 
 function Dropdown({ options, onChange, value, dropdownStyle }) {

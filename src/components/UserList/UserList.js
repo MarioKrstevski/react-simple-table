@@ -5,10 +5,20 @@ import { useDebounce } from 'use-lodash-debounce'
 import List from './List'
 
 const Wrapper = styled.div`
-    margin: 200px auto 0;
+    margin: 200px 0;
+    margin-left: 70px;
 
-    max-width: 860px;
+    width: 80vw;
+    min-width: 400px;
     border: 1px solid black;
+`
+
+const Options = styled.div`
+    display: flex;
+    align-items: center;
+    padding: 8px 20px;
+    color: black;
+    font-size: 14px;
 `
 
 const UserList = () => {
@@ -27,67 +37,79 @@ const UserList = () => {
         })
     }
     useEffect(() => {
-        const apiAll = 'https://my.api.mockaroo.com/users?key=dc4f4780'
-        const apiLimit =
-            'https://my.api.mockaroo.com/users/' + itemsToShow + '?key=dc4f4780'
+        // const apiAll = 'https://my.api.mockaroo.com/users?key=dc4f4780'
+        // const apiLimit =
+        //     'https://my.api.mockaroo.com/users/' + itemsToShow + '?key=dc4f4780'
 
-        setIsLoading(true)
-        const started = new Date().getTime()
-        const respPromise = fetch(itemsToShow === 'all' ? apiAll : apiLimit)
-            .then(resp => resp.json())
-            .then(users => {
-                console.log(users)
-                setUsers(users)
+        // setIsLoading(true)
+        // const started = new Date().getTime()
+        // const respPromise = fetch(itemsToShow === 'all' ? apiAll : apiLimit)
+        //     .then(resp => resp.json())
+        //     .then(users => {
+        //         console.log(users)
+        //         setUsers(users)
+        //         setIsLoading(false)
+        //         setTimeTaken(new Date().getTime() - started)
+        //     })
+
+        // in case api doesnt work uncoment this below to use mock data
+        const response = fakeAsync(3000, mockJson)
+        response
+            .then(function(resp) {
+                console.log(typeof itemsToShow)
+                setUsers(
+                    itemsToShow === 'all'
+                        ? resp
+                        : resp.slice(0, parseInt(itemsToShow))
+                )
                 setIsLoading(false)
-                setTimeTaken(new Date().getTime() - started)
+            })
+            .catch(function(e) {
+                console.log(e)
+                setIsLoading(false)
             })
     }, [itemsToShow])
 
-    useEffect(() => {
-        // console.log('Users', users)
-    }, [users])
-
-    useEffect(() => {
-        // console.log('GSV', globalSearchValue)
-    }, [globalSearchValue])
     return (
         <Wrapper>
-            <div>
-                <label style={{ padding: '0 8px' }} htmlFor="globalValue">
-                    {' '}
-                    Global Search{' '}
-                </label>
-                <input
-                    name="globalValue"
-                    value={globalSearchValue}
-                    onChange={e => {
-                        setGlobalSearchValue(e.target.value)
-                        // console.log(e.target.value)
-                    }}
-                />
+            <Options>
+                <div>
+                    <label style={{ padding: '0 8px' }} htmlFor="globalValue">
+                        {' '}
+                        Global Search{' '}
+                    </label>
+                    <input
+                        name="globalValue"
+                        value={globalSearchValue}
+                        onChange={e => {
+                            setGlobalSearchValue(e.target.value)
+                        }}
+                    />
+                </div>
+                <div>
+                    <input
+                        style={{ marginLeft: 20 }}
+                        type="checkbox"
+                        name="useFilters"
+                        checked={useFilters}
+                        onChange={e => {
+                            setUseFilters(e.target.checked)
+                            console.dir(e.target.checked)
+                        }}
+                    />
+                    <label
+                        style={{ padding: '0 8px', marginLeft: 4 }}
+                        htmlFor="useFilters"
+                    >
+                        Use Seperate Filters
+                    </label>
+                </div>
 
-                <input
-                    style={{ marginLeft: 20 }}
-                    type="checkbox"
-                    name="useFilters"
-                    checked={useFilters}
-                    onChange={e => {
-                        setUseFilters(e.target.checked)
-                        console.dir(e.target.checked)
-                    }}
-                />
-                <label
-                    style={{ padding: '0 8px', marginLeft: 4 }}
-                    htmlFor="useFilters"
-                >
-                    Use Seperate Filters
-                </label>
-
-                {!!users && <b> {users.length} results</b>}
+                {!!users && <b> Showing: {users.length} results</b>}
                 {!!timeTaken && (
-                    <span> Time loading : {timeTaken} miliseconds</span>
+                    <span> Time spent fetching : {timeTaken} miliseconds</span>
                 )}
-            </div>
+            </Options>
             <List
                 isLoading={isLoading}
                 data={users}
